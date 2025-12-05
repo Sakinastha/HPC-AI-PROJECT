@@ -125,12 +125,15 @@ def train_hybrid(epochs=5, batch_size=64, learning_rate=0.01):
         print(f"Total training samples: {len(train_loader.dataset)}")
     
     # Create model and wrap with DDP
+        
     if is_main:
         print("\nInitializing distributed model with GPU support...")
-    
-    model = SimpleCNN().to(device)
-    model = DDP(model)
-    
+
+    # CRITICAL FIX: Initialize model on CPU first for DDP compatibility on MPS
+    model = SimpleCNN().to('cpu')           # ← Must be on CPU here
+    model = DDP(model)                       # ← DDP works safely on CPU
+    model = model.to(device)                 # ← Now safely move to MPS/GPU
+
     optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
     
     if is_main:

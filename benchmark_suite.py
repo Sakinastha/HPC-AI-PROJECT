@@ -447,7 +447,7 @@ def main():
     
     # Check if we have at least baseline
     if not results['baseline']:
-        print("\n❌ Error: Baseline results not available. Cannot continue.")
+        print("\n Error: Baseline results not available. Cannot continue.")
         return
     
     total_time = time.time() - start_time
